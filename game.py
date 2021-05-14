@@ -13,6 +13,7 @@ OTHER_PLAYERS = 2
 DECK_SIZE = 13
 
 def create():
+    """Fragt Spieler nach seinen Karten (1-4 == Karo-Kreuz, 1-13 Ass-König)"""
     for i in range(DECK_SIZE):
         try:
             c = tuple([int(i) for i in input(f'{i+1}te Handkarte? ').split(',')])
@@ -45,24 +46,15 @@ def rand_deck(size):
        Daher DECK_GES Menge von zwei kompletten Kartensets."""
     return sample(population=STPL,k=size)
 
-# def grp_filter(deck):
-#     grps = []
-#     for c in deck:
-#         members = []
-#         col, pic = c
-#         o_cols = [color for color in COLS if color != col]
-#         for color in o_cols:
-#             if (color,pic) in deck:
-#                 members.append((color,pic))
-#         if len(members) >= 2:
-#             grps.extend(members.append(c))
-#     print([c for c in deck if c not in grps])
-
 def vict_check(deck):
+    """Schaut für jede Karte, ob eine Gruppe oder Reihe vorhanden ist,
+       wenn ja, dann gewonnen"""
     covered = []
     for card in deck:
         if card not in covered:
-            if (card[0],card[1]+1) in deck and (card[0],card[1]-1) in deck or (card[0],card[1]+1) in deck and (card[0],card[1]+2) in deck or (card[0],card[1]-1) in deck and (card[0],card[1]-2) in deck:
+            if ((card[0],card[1]+1) in deck and (card[0],card[1]-1) in deck 
+            or (card[0],card[1]+1) in deck and (card[0],card[1]+2) in deck 
+            or (card[0],card[1]-1) in deck and (card[0],card[1]-2) in deck):
                 covered.append(card)
             col, pic = card
             o_cols = [c for c in COLS if c!=col]
@@ -195,7 +187,7 @@ def my_turn(deck,card):
         try:
             DISCARD.remove(card)
         except ValueError:
-            print('VALUE ERROR 2',sep=)
+            print('VALUE ERROR 2')
     else:
         print('Nimm vom Stapel.')
         try:
@@ -257,7 +249,8 @@ def other_turn(no,deck):
             c = tuple([int(i) for i in inp.split(',')])
     else:
         c = ''
-
+    
+    #um spieler zu skippen
     if not c:
         pass
     else:
@@ -282,20 +275,3 @@ def other_turn(no,deck):
     except ValueError:
         print('VALUE ERROR 8')
     print(deck)
-
-if __name__ == '__main__':
-    create()
-    
-    while True:
-        print('PLAYER YOU')
-        try:
-            op = tuple([int(i) for i in input('Welche Karte liegt offen? ').split(',')])
-        except Exception:
-            print('ERROR, TRY AGAIN')
-            op = tuple([int(i) for i in input('Welche Karte liegt offen? ').split(',')])
-
-        my_turn(DECK, op)
-        print('\n')
-        for player in range(OTHER_PLAYERS):
-            other_turn(player,G_DECKS[player])
-            print('\n')
